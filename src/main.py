@@ -5,7 +5,6 @@ from src.extract.api_extractor import extract_and_save_exchange_rate
 from src.extract.web_extractor import extract_and_save_banks
 from src.transform.market_cap_transformer import transform_market_cap_to_currency
 
-# Configura logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -27,18 +26,14 @@ def run_etl_pipeline(
     logger.info("=" * 50)
     
     try:
-        # 1. EXTRAÇÃO (SEM FILTROS!)
         logger.info("Fase 1: Extração de dados")
         
-        # Extrai TODAS as taxas (sem filtro de target)
         logger.info(f"Extraindo taxas de câmbio (base: {base_currency})...")
         exchange_data = extract_and_save_exchange_rate(base_currency)
         
-        # Extrai dados dos bancos
         logger.info("Extraindo dados dos bancos da Wikipedia...")
         banks_df = extract_and_save_banks()
         
-        # 2. TRANSFORMAÇÃO (FILTRO APLICADO AQUI!)
         logger.info("Fase 2: Transformação de dados")
         logger.info(f"Convertendo para {target_currency}...")
         
@@ -47,7 +42,6 @@ def run_etl_pipeline(
             target_currency=target_currency
         )
         
-        # 3. CARGA (manter sua lógica atual)
         logger.info("Fase 3: Carga de dados")
         from src.load.file_loader import load_to_csv
         output_file = load_to_csv(transformed_df, f"bank_market_cap_{target_currency.lower()}")

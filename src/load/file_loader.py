@@ -31,27 +31,19 @@ class IncrementalCSVLoader:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         date_str = datetime.now().strftime("%Y-%m-%d")
         
-        # Nome do arquivo diário
         daily_file = self.output_dir / f"{filename}_{date_str}.csv"
         
-        # Nome do arquivo com timestamp
         timestamped_file = self.output_dir / f"{filename}_{timestamp}.csv"
         
-        # Verifica se já existe arquivo do dia
         if daily_file.exists():
-            # Carrega dados existentes
             existing_df = pd.read_csv(daily_file)
             
-            # Remove duplicatas baseado em uma chave única
-            # Assumindo que 'Bank name' é único
             key_column = 'Bank name' if 'Bank name' in df.columns else df.columns[0]
             
-            # Filtra apenas novos registros
             existing_keys = set(existing_df[key_column].astype(str))
             new_records = df[~df[key_column].astype(str).isin(existing_keys)]
             
             if not new_records.empty:
-                # Adiciona novos registros
                 updated_df = pd.concat([existing_df, new_records], ignore_index=True)
                 updated_df.to_csv(daily_file, index=False)
                 
@@ -60,15 +52,12 @@ class IncrementalCSVLoader:
                 updated_df = existing_df
                 logger.info("Nenhum novo registro para adicionar")
         else:
-            # Primeira carga do dia
             df.to_csv(daily_file, index=False)
             updated_df = df
             logger.info(f"Criado novo arquivo diário com {len(df)} linhas")
         
-        # Salva também arquivo com timestamp para histórico
         updated_df.to_csv(timestamped_file, index=False)
         
-        # Atualiza histórico
         history = self._load_history()
         history["loads"].append({
             "timestamp": timestamp,
@@ -80,7 +69,6 @@ class IncrementalCSVLoader:
         })
         self._save_history(history)
         
-        # Cria/atualiza arquivo consolidado
         self._update_consolidated(updated_df, filename)
         
         return str(timestamped_file)
@@ -91,7 +79,6 @@ class IncrementalCSVLoader:
         
         if consolidated_file.exists():
             consolidated_df = pd.read_csv(consolidated_file)
-            # Remove registros duplicados mais antigos
             key_column = 'Bank name' if 'Bank name' in df.columns else df.columns[0]
             consolidated_df = consolidated_df[
                 ~consolidated_df[key_column].astype(str).isin(df[key_column].astype(str))

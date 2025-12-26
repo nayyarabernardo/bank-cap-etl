@@ -45,7 +45,6 @@ class BanksExtractor:
         filename = f"banks_wikipedia_{timestamp}.json"
         filepath = self.raw_dir / filename
         
-        # Converte DataFrame para dict com orientação 'records'
         data = {
             "data": df.to_dict(orient='records'),
             "_metadata": {

@@ -18,7 +18,7 @@ class ExchangeRateExtractor:
     def extract_all_rates(self, base_currency: str = "EUR") -> Dict:
         """Extrai TODAS as taxas de câmbio da API (sem filtros)"""
         params = {
-            "base": base_currency  # Podemos usar EUR como base padrão
+            "base": base_currency  
         }
         
         headers = {
@@ -57,7 +57,6 @@ class ExchangeRateExtractor:
         filename = f"exchange_rates_{base_currency}_{timestamp}.json"
         filepath = self.raw_dir / filename
         
-        # Adiciona metadados
         data_with_metadata = {
             **data,
             "_extraction_metadata": {
@@ -95,18 +94,13 @@ class ExchangeRateExtractor:
         
         rates = data.get("rates", {})
         
-        # Se a base do arquivo é diferente, precisamos converter
         file_base = data.get("base", "EUR")
         
         if file_base == base_currency:
-            # Base igual, retorna direto
             return rates.get(target_currency)
         else:
-            # Precisa converter
-            # Exemplo: arquivo tem base EUR, queremos USD->GBP
-            # taxa = (EUR->GBP) / (EUR->USD)
-            usd_rate = rates.get(base_currency)  # EUR->USD
-            gbp_rate = rates.get(target_currency)  # EUR->GBP
+            usd_rate = rates.get(base_currency)  
+            gbp_rate = rates.get(target_currency)  
             
             if usd_rate and gbp_rate and usd_rate != 0:
                 return gbp_rate / usd_rate
@@ -120,7 +114,6 @@ def extract_and_save_exchange_rate(base_currency: str = "USD") -> Dict:
     extractor.save_daily_json(data, base_currency)
     return data
 
-# Função de compatibilidade (mantém API antiga)
 def extract_exchange_rate_old(base_currency: str = "USD", target_currency: str = "GBP") -> Dict:
     """Função antiga para compatibilidade (não usar filtro)"""
     logger.warning("Esta função está depreciada. Use extract_and_save_exchange_rate()")
