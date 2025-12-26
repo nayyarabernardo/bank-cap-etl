@@ -131,7 +131,7 @@ PROCESSED_DIR = DATA_DIR / "processed"
 - Historical tracking with JSON metadata
 - File versioning and retention management
 
-## 🏃‍♂️ Usage
+## Usage
 
 ### Basic Execution
 
@@ -370,10 +370,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Wikipedia for banking information
 - Pandas community for data manipulation tools
 
-## Support
-
-For issues and questions:
-1. Check existing GitHub issues
-2. Review pipeline logs in `logs/` directory
-3. Consult the troubleshooting guide in `docs/TROUBLESHOOTING.md`
 
